@@ -18,6 +18,14 @@
   "homepage": "https://github.com/hr-rpp28-sdc-peach/questions-api#readme",
   "devDependencies": {
     "eslint": "^7.30.0",
+    "eslint-plugin-react": "^7.24.0",
     "jest": "^27.0.6"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.6.5",
+    "sequelize-cli": "^6.2.0"
   }
 }
