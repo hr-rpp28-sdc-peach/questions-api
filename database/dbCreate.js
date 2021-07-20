@@ -67,7 +67,7 @@ sequelize.authenticate()
 
   })
   .catch(function(error) {
-    console.error('Unable to connect to the database:', error)
+    console.error('DB Creation ERROR:', error)
   })
 
 

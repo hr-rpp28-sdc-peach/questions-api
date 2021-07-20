@@ -16,7 +16,9 @@ const sequelize = new Sequelize(database, user, password, {
 })
 
 sequelize.authenticate()
-  .then(console.log('Connection has been established successfully.'))
+  .then(function(success) {
+    console.log('Connection has been established successfully.')
+  })
 
   .then(() => {
     return sequelize.query(`COPY "Questions"(id, product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness) from '/Users/saralandis/VS Code Projects/hack reactor/questions-api/ETL Data/questions.csv' DELIMITER ',' CSV HEADER`)
@@ -33,5 +35,5 @@ sequelize.authenticate()
 
 
   .catch(function(error) {
-    console.error('Unable to connect to the database:', error)
+    console.error('DB Seeding ERROR:', error)
   })
