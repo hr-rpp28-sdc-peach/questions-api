@@ -8,8 +8,19 @@ app.use(bodyParser.json())
 
 // get all questions
 app.get('/qa/questions', function(req, res) {
-  console.log('MUST CREATE RESPONSE')
-  //res.send
+  console.log("getAllQuestionsRequest", req.query)
+  var product_id = req.query.product_id;
+  var count = req.query.count? parseInt(req.query.count) : 5;
+  var page = req.query.page? parseInt(req.query.page) : 1;
+
+  return db.getQuestions(product_id, count, page)
+    .then( (questions) => {
+      res.status(200).send(questions)
+    })
+    .catch ((error) => {
+      res.status(500).send(error)
+    })
+  // then run filtering?
 })
 
 // add question
@@ -62,5 +73,5 @@ app.put('/qa/answers/:answer_id/report', function(req, res) {
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Questions Server listening at http://localhost:${port}`)
 })

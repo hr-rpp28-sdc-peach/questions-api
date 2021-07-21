@@ -1,4 +1,5 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
+const {Question, Answer, Photo} = require('./dbCreate.js')
 require('dotenv').config();
 
 const user = process.env.USER
@@ -26,6 +27,15 @@ sequelize.authenticate()
 // database 'response' functions
 
 // send all questions (two at a time????)
+const getQuestions = (product_id, page, count) => {
+  console.log('GOT CALLED')
+  return Question.findAll({
+    where:{
+      product_id: product_id
+    }});
+}
+
+
 // add question
 // send answers
 // add answer
@@ -36,3 +46,4 @@ sequelize.authenticate()
 // report answer
 
 
+module.exports = {getQuestions}
