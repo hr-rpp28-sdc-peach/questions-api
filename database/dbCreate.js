@@ -67,7 +67,7 @@ sequelize.authenticate()
   Question.hasMany(Answer);
   Answer.belongsTo(Question);
 
-  sequelize.sync({ force: true });
+  sequelize.sync();
 
   module.exports = {Photo, Question, Answer}
 

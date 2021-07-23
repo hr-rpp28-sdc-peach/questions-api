@@ -2,11 +2,11 @@ const { Sequelize, Model, DataTypes } = require('sequelize');
 const {Question, Answer, Photo} = require('./dbCreate.js')
 require('dotenv').config();
 
-const user = process.env.USER
-const host = process.env.HOST
-const database = process.env.DATABASE
-const password = process.env.PASSWORD
-const port = process.env.PORT
+const user = process.env.USER;
+const host = process.env.HOST;
+const database = process.env.DATABASE;
+const password = process.env.PASSWORD;
+const port = process.env.PORT;
 
 const sequelize = new Sequelize(database, user, password, {
   host,
@@ -28,16 +28,22 @@ sequelize.authenticate()
 
 // send all questions (two at a time????)
 const getQuestions = (product_id, page, count) => {
-  console.log('GOT CALLED')
   return Question.findAll({
     where:{
       product_id: product_id
     }});
 }
-
-
 // add question
+
+
 // send answers
+const getAnswers = (question_id, page, count) => {
+  console.log('GOT CALLED')
+  return Answer.findAll({
+    where:{
+      question_id: question_id
+    }});
+}
 // add answer
 // add photos ?????
 // mark question helpful
@@ -46,4 +52,4 @@ const getQuestions = (product_id, page, count) => {
 // report answer
 
 
-module.exports = {getQuestions}
+module.exports = {getQuestions, getAnswers}

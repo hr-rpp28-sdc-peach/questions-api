@@ -8,7 +8,6 @@ app.use(bodyParser.json())
 
 // get all questions
 app.get('/qa/questions', function(req, res) {
-  console.log("getAllQuestionsRequest", req.query)
   var product_id = req.query.product_id;
   var count = req.query.count? parseInt(req.query.count) : 5;
   var page = req.query.page? parseInt(req.query.page) : 1;
@@ -31,8 +30,16 @@ app.post('/qa/questions', function(req, res) {
 
 // get answers
 app.get('/qa/questions/:question_id/answers', function(req, res) {
-  console.log('MUST CREATE RESPONSE')
-  //res.send
+  var question_id = req.params.question_id;
+  var count = req.query.count? parseInt(req.query.count) : 5;
+  var page = req.query.page? parseInt(req.query.page) : 1;
+  return db.getAnswers(question_id, count, page)
+    .then( (answers) => {
+      res.status(200).send(answers)
+    })
+    .catch ((error) => {
+      res.status(500).send(error)
+    })
 })
 
 // add answer
