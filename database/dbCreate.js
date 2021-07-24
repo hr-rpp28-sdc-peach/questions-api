@@ -53,7 +53,11 @@ sequelize.authenticate()
 
 
   const Answer = sequelize.define('Answer', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
     body: {type: DataTypes.TEXT},
     date: {type: DataTypes.BIGINT}, //will need to convert???
     answerer_name: {type: DataTypes.STRING},

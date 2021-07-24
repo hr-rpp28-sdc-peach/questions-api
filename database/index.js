@@ -36,7 +36,7 @@ const getQuestions = (product_id, page, count) => {
 // add question
 
 const addQuestion = (questionInfo) => {
-  console.log(questionInfo);
+
   return Question.create({
     asker_name: questionInfo.asker_name,
     question_body: questionInfo.question_body,
@@ -51,13 +51,25 @@ const addQuestion = (questionInfo) => {
 
 // send answers
 const getAnswers = (question_id, page, count) => {
-  console.log('queeestiionnnn', question_id)
   return Answer.findAll({
     where:{
       question_id: question_id
     }});
 }
 // add answer
+
+const addAnswer = (answerInfo) => {
+  return Answer.create({
+    body: answerInfo.body,
+    date: Math.floor(Date.now()/1000),
+    answerer_name: answerInfo.answerer_name,
+    answerer_email: answerInfo.answerer_email,
+    helpfulness: 0,
+    reported: 0
+  })
+}
+
+
 // add photos ?????
 // mark question helpful
 // mark answer helpful
@@ -65,4 +77,4 @@ const getAnswers = (question_id, page, count) => {
 // report answer
 
 
-module.exports = {getQuestions, getAnswers, addQuestion}
+module.exports = {getQuestions, getAnswers, addQuestion, addAnswer}

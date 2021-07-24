@@ -52,9 +52,17 @@ app.get('/qa/questions/:question_id/answers', bodyParser.json(), function(req, r
 })
 
 // add answer
-app.post('/qa/questions/:question_id/answers', function(req, res) {
-  console.log('MUST CREATE RESPONSE')
-  //res.send
+app.post('/qa/questions/:question_id/answers', bodyParser.urlencoded(),  function(req, res) {
+  //req
+  return db.addAnswer(req.body)
+  .then((answerAdded) => {
+    console.log("Successfully added answer", answerAdded)
+    res.status(201).send(answerAdded);
+  })
+  .catch((error) => {
+    console.log("Failed to add answer")
+    res.status(500).send(error);
+  })
 })
 
 // get photos?
