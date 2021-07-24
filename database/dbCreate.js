@@ -26,7 +26,7 @@ sequelize.authenticate()
   //tables automatically have plueral names of these singular models unless told otherwise
 
   const Photo = sequelize.define('Photo', {
-    id: {type: DataTypes.INTEGER, primaryKey: true},
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     url: {type: DataTypes.TEXT}
   },{
     underscored: true,
@@ -34,7 +34,11 @@ sequelize.authenticate()
   })
 
   const Question = sequelize.define('Question', {
-    id: {type: DataTypes.INTEGER, primaryKey: true},
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
     product_id: {type: DataTypes.INTEGER},
     question_body: {type: DataTypes.TEXT},
     question_date: {type: DataTypes.BIGINT}, //will need to convert on db query response
@@ -49,7 +53,7 @@ sequelize.authenticate()
 
 
   const Answer = sequelize.define('Answer', {
-    id: {type: DataTypes.INTEGER, primaryKey: true},
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     body: {type: DataTypes.TEXT},
     date: {type: DataTypes.BIGINT}, //will need to convert???
     answerer_name: {type: DataTypes.STRING},

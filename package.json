@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --forceExit --detectOpenHandles --maxWorkers=1",
+    "coverage": "jest --coverage",
     "start": "nodemon ./server/index.js"
   },
   "repository": {
@@ -21,7 +22,8 @@
     "axios": "^0.21.1",
     "eslint": "^7.30.0",
     "eslint-plugin-react": "^7.24.0",
-    "jest": "^27.0.6"
+    "jest": "^27.0.6",
+    "supertest": "^6.1.4"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

@@ -35,10 +35,23 @@ const getQuestions = (product_id, page, count) => {
 }
 // add question
 
+const addQuestion = (questionInfo) => {
+  console.log(questionInfo);
+  return Question.create({
+    asker_name: questionInfo.asker_name,
+    question_body: questionInfo.question_body,
+    asker_email: questionInfo.asker_email,
+    product_id: questionInfo.product_id,
+    question_date: Math.floor(Date.now()/1000),
+    question_helpfulness: 0,
+    reported: 0
+  })
+}
+
 
 // send answers
 const getAnswers = (question_id, page, count) => {
-  console.log('GOT CALLED')
+  console.log('queeestiionnnn', question_id)
   return Answer.findAll({
     where:{
       question_id: question_id
@@ -52,4 +65,4 @@ const getAnswers = (question_id, page, count) => {
 // report answer
 
 
-module.exports = {getQuestions, getAnswers}
+module.exports = {getQuestions, getAnswers, addQuestion}
