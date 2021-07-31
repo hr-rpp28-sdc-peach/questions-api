@@ -77,15 +77,13 @@ const addAnswer = (answerInfo) => {
 // mark question helpful
 const updateQuestionHelpfulness = (question_id) => {
   let questionIDInt = Number(question_id);
-  console.log(questionIDInt)
- // update
   return Question.increment('question_helpfulness', {by: 1, where: {id: questionIDInt}})
- // wherre question id =
 }
 
 // mark answer helpful
-const updateAnswerHelpfulness = () => {
-
+const updateAnswerHelpfulness = (answer_id) => {
+  let answerIDInt = Number(answer_id);
+  return Answer.increment('helpfulness', {by: 1, where: {id: answerIDInt}})
 }
 // report question
 

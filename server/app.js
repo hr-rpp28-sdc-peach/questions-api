@@ -94,7 +94,7 @@ app.put('/qa/questions/:question_id/helpful', function(req, res) {
 
 // mark answer helpful
 app.put('/qa/answers/:answer_id/helpful', function(req, res) {
-  return db.updateAnswerHelpfulness(req)
+  return db.updateAnswerHelpfulness(req.params.answer_id)
   .then((answerHelpUpdated) => {
     console.log("Successfully updated answer helpfulness", answerHelpUpdated)
     res.status(200).send(answerHelpUpdated);
