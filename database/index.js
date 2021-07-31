@@ -85,15 +85,18 @@ const updateAnswerHelpfulness = (answer_id) => {
   let answerIDInt = Number(answer_id);
   return Answer.increment('helpfulness', {by: 1, where: {id: answerIDInt}})
 }
+
 // report question
 
-const reportQuestion = () => {
-
+const reportQuestion = (question_id) => {
+  let questionIDInt = Number(question_id);
+  return Question.update({'reported': true}, {where: {id: questionIDInt}})
 }
 // report answer
 
-const reportAnswer = () => {
-
+const reportAnswer = (answer_id) => {
+  let answerIDInt = Number(answer_id);
+  return Answer.update({'reported': true}, {where: {id:answerIDInt}})
 }
 
 

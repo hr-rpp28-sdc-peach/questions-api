@@ -107,7 +107,7 @@ app.put('/qa/answers/:answer_id/helpful', function(req, res) {
 
 // report question
 app.put('/qa/questions/:question_id/report', function(req, res) {
-  return db.reportQuestion(req)
+  return db.reportQuestion(req.params.question_id)
   .then((questionReported) => {
     console.log("Successfully reported question", questionReported)
     res.status(200).send(questionReported);
@@ -120,7 +120,7 @@ app.put('/qa/questions/:question_id/report', function(req, res) {
 
 // report answer
 app.put('/qa/answers/:answer_id/report', function(req, res) {
-  return db.reportAnswer(req)
+  return db.reportAnswer(req.params.answer_id)
   .then((answerReported) => {
     console.log("Successfully reported answer", answerReported)
     res.status(200).send(answerReported);
