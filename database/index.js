@@ -59,22 +59,44 @@ const getAnswers = (question_id, page, count) => {
 // add answer
 
 const addAnswer = (answerInfo) => {
+  console.log('Question ID', answerInfo.params.question_id);
   return Answer.create({
-    body: answerInfo.body,
+    question_id: answerInfo.params.question_id,
+    body: answerInfo.body.body,
     date: Math.floor(Date.now()/1000),
-    answerer_name: answerInfo.answerer_name,
-    answerer_email: answerInfo.answerer_email,
+    answerer_name: answerInfo.body.answerer_name,
+    answerer_email: answerInfo.body.answerer_email,
     helpfulness: 0,
     reported: 0
   })
 }
 
 
-// add photos ?????
+// add photos ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+
 // mark question helpful
+const updateQuestionHelpfulness = (question_id) => {
+  let questionIDInt = Number(question_id);
+  console.log(questionIDInt)
+ // update
+  return Question.increment('question_helpfulness', {by: 1, where: {id: questionIDInt}})
+ // wherre question id =
+}
+
 // mark answer helpful
+const updateAnswerHelpfulness = () => {
+
+}
 // report question
+
+const reportQuestion = () => {
+
+}
 // report answer
 
+const reportAnswer = () => {
 
-module.exports = {getQuestions, getAnswers, addQuestion, addAnswer}
+}
+
+
+module.exports = {getQuestions, getAnswers, addQuestion, addAnswer, updateQuestionHelpfulness, updateAnswerHelpfulness, reportQuestion, reportAnswer}

@@ -25,13 +25,6 @@ sequelize.authenticate()
 
   //tables automatically have plueral names of these singular models unless told otherwise
 
-  const Photo = sequelize.define('Photo', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    url: {type: DataTypes.TEXT}
-  },{
-    underscored: true,
-    tableName: "Photos"
-  })
 
   const Question = sequelize.define('Question', {
     id: {
@@ -69,11 +62,19 @@ sequelize.authenticate()
     tableName: "Answers"
   })
 
+  const Photo = sequelize.define('Photo', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    url: {type: DataTypes.TEXT}
+  },{
+    underscored: true,
+    tableName: "Photos"
+  })
+
   Answer.hasMany(Photo);
-  Photo.belongsTo(Answer);
+  Photo.belongsTo(Answer, {foreignKey: "answer_id"});
 
   Question.hasMany(Answer);
-  Answer.belongsTo(Question);
+  Answer.belongsTo(Question, {foreignKey: "question_id"});
 
   sequelize.sync();
 
