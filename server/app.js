@@ -14,8 +14,9 @@ app.get('/qa/questions', function(req, res) {
 
   return db.getQuestions(product_id, count, page)
     .then( (questions) => {
-      console.log("Successfully got questions", questions)
-      res.status(200).send(questions)
+      console.log("Successfully got ALL questions");
+      var nonReportedQuestions = questions.filter((question) => !question.reported);
+      res.status(200).send(nonReportedQuestions)
     })
     .catch ((error) => {
       console.log("Failed to get questions")
@@ -44,7 +45,9 @@ app.get('/qa/questions/:question_id/answers', bodyParser.json(), function(req, r
   var page = req.query.page? parseInt(req.query.page) : 1;
   return db.getAnswers(question_id, count, page)
     .then( (answers) => {
-      res.status(200).send(answers)
+      console.log("Successfully got ALL answers")
+      var nonReportedAnswers = answers.filter((answer) => !answer.reported);
+      res.status(200).send(nonReportedAnswers)
     })
     .catch ((error) => {
       res.status(500).send(error)
