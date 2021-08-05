@@ -15,6 +15,7 @@ app.get('/qa/questions', function(req, res) {
   return db.getQuestions(product_id, page, pageSize)
     .then( (questions) => {
       console.log("Successfully got ALL questions");
+      var finalFormattedQuestions = [];
       var nonReportedQuestions = questions.filter((question) => !question.reported);
       var formattedQuestions = nonReportedQuestions.map((question) => {
         var formattedAnswers = {};
@@ -41,15 +42,36 @@ app.get('/qa/questions', function(req, res) {
                  photos: formattedPhotos
                }
 
-               console.log('FINAL ANSWER', finalAnswer)
+               formattedAnswers[answer.dataValues.id] = finalAnswer;
+               return formattedAnswers;
+             })
+             .then((formattedAnswers) => {
+               var finalQuestion = {
+                question_id: question.dataValues.question_id,
+                question_body: question.dataValues.question_body,
+                question_date: new Date(Number(question.dataValues.question_date)).toISOString(),
+                asker_name: question.dataValues.asker_name,
+                question_helpfulness: question.dataValues.question_helpfulness,
+                reported: question.dataValues.reported,
+                answers: formattedAnswers
+               }
+               finalFormattedQuestions.push(finalQuestion);
+               return finalFormattedQuestions
+             })
+             .then((finalFormattedQuestions) => {
+               var properlyFormattedQuestionsAnswersPhotos = {
+                 product_id,
+                 results: finalFormattedQuestions
+               }
+               return properlyFormattedQuestionsAnswersPhotos
+             })
+             .then((properlyFormattedQuestionsAnswersPhotos) => {
+               res.status(200).send(properlyFormattedQuestionsAnswersPhotos)
              })
            })
-
         })
       })
 
-
-      res.status(200).send(nonReportedQuestions)
     })
     .catch ((error) => {
       console.log("Failed to get questions")
