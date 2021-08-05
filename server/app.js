@@ -9,10 +9,10 @@ app.use(bodyParser.json())
 // get all questions
 app.get('/qa/questions', function(req, res) {
   var product_id = req.query.product_id;
-  var count = req.query.count? parseInt(req.query.count) : 5;
-  var page = req.query.page? parseInt(req.query.page) : 1;
+  var pageSize = req.query.pageSize? parseInt(req.query.pageSize) : 5;
+  var page = req.query.page? parseInt(req.query.page) : 0;
 
-  return db.getQuestions(product_id, count, page)
+  return db.getQuestions(product_id, page, pageSize)
     .then( (questions) => {
       console.log("Successfully got ALL questions");
       var nonReportedQuestions = questions.filter((question) => !question.reported);
@@ -41,9 +41,9 @@ app.post('/qa/questions', bodyParser.urlencoded(), function(req, res) {
 // get answers
 app.get('/qa/questions/:question_id/answers', bodyParser.json(), function(req, res) {
   var question_id = req.params.question_id;
-  var count = req.query.count? parseInt(req.query.count) : 5;
-  var page = req.query.page? parseInt(req.query.page) : 1;
-  return db.getAnswers(question_id, count, page)
+  var pageSize = req.query.pageSize? parseInt(req.query.pageSize) : 5;
+  var page = req.query.page? parseInt(req.query.page) : 0;
+  return db.getAnswers(question_id, page, pageSize)
     .then( (answers) => {
       console.log("Successfully got ALL answers")
       var nonReportedAnswers = answers.filter((answer) => !answer.reported);

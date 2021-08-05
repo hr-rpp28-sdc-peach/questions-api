@@ -24,14 +24,23 @@ sequelize.authenticate()
     console.error('Unable to connect to the database:', error)
   })
 
-// database 'response' functions
+const paginate = ({page, pageSize}) => {
+  const offset = page * pageSize;
+  const limit = pageSize;
+  return {
+    limit,
+    offset
+  };
+};
 
 // send all questions (two at a time????)
-const getQuestions = (product_id, page, count) => {
+const getQuestions = (product_id, page, pageSize) => {
   return Question.findAll({
     where:{
       product_id: product_id
-    }});
+    },
+    ...paginate({ page, pageSize }),
+  });
 }
 // add question
 
@@ -50,11 +59,13 @@ const addQuestion = (questionInfo) => {
 
 
 // send answers
-const getAnswers = (question_id, page, count) => {
+const getAnswers = (question_id, page, pageSize) => {
   return Answer.findAll({
     where:{
       question_id: question_id
-    }});
+    },
+    ...paginate({page, pageSize})
+  });
 }
 // add answer
 
