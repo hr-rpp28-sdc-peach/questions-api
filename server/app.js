@@ -16,13 +16,45 @@ app.get('/qa/questions', function(req, res) {
     .then( (questions) => {
       console.log("Successfully got ALL questions");
       var nonReportedQuestions = questions.filter((question) => !question.reported);
+      var formattedQuestions = nonReportedQuestions.map((question) => {
+        var formattedAnswers = {};
+        db.getAnswers(question.dataValues.id, page, pageSize)
+        .then((nonReportedAnswers) => {
+           nonReportedAnswers.forEach((answer) => {
+            //  console.log('ANSWER', answer.dataValues.id)
+             db.getPhotos(answer.dataValues.id)
+             .then((photos) => {
+               var formattedPhotos = []
+               photos.forEach((photo) => {
+                 var photoObject = {};
+                 photoObject.id = photo.dataValues.id;
+                 photoObject.url = photo.dataValues.url;
+                 formattedPhotos.push(photoObject);
+               });
+
+               var finalAnswer = {
+                 id: answer.dataValues.id,
+                 body: answer.dataValues.body,
+                 date: new Date(Number(answer.dataValues.date)).toISOString(),
+                 answerer_name: answer.dataValues.answerer_name,
+                 helpfulness: answer.dataValues.helpfulness,
+                 photos: formattedPhotos
+               }
+
+               console.log('FINAL ANSWER', finalAnswer)
+             })
+           })
+
+        })
+      })
+
+
       res.status(200).send(nonReportedQuestions)
     })
     .catch ((error) => {
       console.log("Failed to get questions")
       res.status(500).send(error)
     })
-  // then run filtering?
 })
 
 // add question
