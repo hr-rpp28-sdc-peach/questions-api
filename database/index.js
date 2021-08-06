@@ -60,6 +60,7 @@ const addQuestion = (questionInfo) => {
 
 // send answers
 const getAnswers = (question_id, page, pageSize) => {
+  console.log('WORKING')
   return Answer.findAll({
     where:{
       question_id: question_id
@@ -91,6 +92,10 @@ const getPhotos = (answer_id) => {
   })
 }
 
+const addPhoto = (answer_id, url) => {
+  //WRITE Me
+}
+
 // mark question helpful
 const updateQuestionHelpfulness = (question_id) => {
   let questionIDInt = Number(question_id);
@@ -117,4 +122,4 @@ const reportAnswer = (answer_id) => {
 }
 
 
-module.exports = {getQuestions, getAnswers, addQuestion, addAnswer, updateQuestionHelpfulness, updateAnswerHelpfulness, reportQuestion, reportAnswer, getPhotos}
+module.exports = {getQuestions, getAnswers, addQuestion, addAnswer, updateQuestionHelpfulness, updateAnswerHelpfulness, reportQuestion, reportAnswer, getPhotos, addPhoto}

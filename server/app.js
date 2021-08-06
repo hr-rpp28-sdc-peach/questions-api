@@ -65,19 +65,14 @@ app.get('/qa/questions', async function(req, res) {
     var properlyFormattedQuestionsAnswersPhotos = {
       product_id,
       results: finalFormattedQuestions
-  }
-  res.status(200).send(properlyFormattedQuestionsAnswersPhotos)
+    }
+  res.status(200).send(properlyFormattedQuestionsAnswersPhotos);
   }
   catch (error) {
     console.log("Failed to get questions")
     res.status(500).send(error)
   }
 })
-
-
-
-
-
 
 
 // add question
@@ -92,21 +87,55 @@ app.post('/qa/questions', bodyParser.urlencoded(), function(req, res) {
       res.status(500).send(error);
     })
 })
+
 // get answers
-app.get('/qa/questions/:question_id/answers', bodyParser.json(), function(req, res) {
-  var question_id = req.params.question_id;
-  var pageSize = req.query.pageSize? parseInt(req.query.pageSize) : 5;
-  var page = req.query.page? parseInt(req.query.page) : 0;
-  return db.getAnswers(question_id, page, pageSize)
-    .then( (answers) => {
-      console.log("Successfully got ALL answers")
-      var nonReportedAnswers = answers.filter((answer) => !answer.reported);
-      res.status(200).send(nonReportedAnswers)
-    })
-    .catch ((error) => {
-      res.status(500).send(error)
-    })
+app.get('/qa/questions/:question_id/answers', bodyParser.json(), async function(req, res) {
+  try {
+    var question_id = req.params.question_id;
+    var pageSize = req.query.pageSize? parseInt(req.query.pageSize) : 5;
+    var page = req.query.page? parseInt(req.query.page) : 0;
+
+    var formattedAnswers = {};
+
+    const nonReportedAnswers = await db.getAnswers(question_id, page, pageSize)
+    console.log("Successfully got ALL answers");
+    for (let j = 0; j < nonReportedAnswers.length; j++) {
+      const answer = nonReportedAnswers[j];
+
+      const photos = await db.getPhotos(answer.dataValues.id)
+
+      var formattedPhotos = []
+      photos.forEach((photo) => {
+        var photoObject = {};
+        photoObject.id = photo.dataValues.id;
+        photoObject.url = photo.dataValues.url;
+        formattedPhotos.push(photoObject);
+      });
+
+      var finalAnswer = {
+        answer_id: answer.dataValues.id,
+        body: answer.dataValues.body,
+        date: new Date(Number(answer.dataValues.date)).toISOString(),
+        answerer_name: answer.dataValues.answerer_name,
+        helpfulness: answer.dataValues.helpfulness,
+        photos: formattedPhotos
+      }
+      formattedAnswers[answer.dataValues.id] = finalAnswer;
+    }
+
+    var properlyFormattedAnswersPhotos = {
+      question_id,
+      page,
+      count: pageSize,
+      results: formattedAnswers
+    }
+    res.status(200).send(properlyFormattedAnswersPhotos);
+  }
+  catch (error){
+    res.status(500).send(error)
+  }
 })
+
 // add answer
 app.post('/qa/questions/:question_id/answers', bodyParser.urlencoded(),  function(req, res) {
   return db.addAnswer(req)
@@ -119,19 +148,8 @@ app.post('/qa/questions/:question_id/answers', bodyParser.urlencoded(),  functio
     res.status(500).send(error);
   })
 })
-// // get photos????????????????????????????????????????????????????????????????????????????????????????????????????????????
-// //add photo to answer ???????????????????????????????????????????????????????????????????????????????????????????????????
-// app.post('ROUTE',bodyParser.urlencoded(), function(req, res) {
-//   return db.addPhoto(req)
-//   .then((photoAdded) => {
-//     console.log("Successfully added photo", photoAdded)
-//     res.status(200).send(photoAdded);
-//   })
-//   .catch((error) => {
-//     console.log("Failed to add photo")
-//     res.status(500).send(error);
-//   })
-// })
+
+
 // mark question helpful
 app.put('/qa/questions/:question_id/helpful', function(req, res) {
   return db.updateQuestionHelpfulness(req.params.question_id)
