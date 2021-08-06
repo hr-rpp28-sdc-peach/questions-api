@@ -93,9 +93,11 @@ const getPhotos = (answer_id) => {
 
 const addPhotos = (answer_id, urls) => {
   if(urls.length > 1) {
+    console.log("HOLA")
     var bulkCreateArray = [];
     for(var i = 0; i < urls.length; i++){
-      var currentUrl = url[i];
+      var currentUrl = urls[i];
+      console.log(currentUrl)
       var urlObj = {answer_id: answer_id, url: currentUrl };
       bulkCreateArray.push(urlObj);
     };
