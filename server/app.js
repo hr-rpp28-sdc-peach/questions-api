@@ -3,81 +3,82 @@ const app = express();
 const port = 3000;
 const db = require('../database/index.js');
 const bodyParser = require('body-parser')
-
 app.use(bodyParser.json())
 
+
+
+
+
+
+
 // get all questions
-app.get('/qa/questions', function(req, res) {
-  var product_id = req.query.product_id;
-  var pageSize = req.query.pageSize? parseInt(req.query.pageSize) : 5;
-  var page = req.query.page? parseInt(req.query.page) : 0;
+app.get('/qa/questions', async function(req, res) {
+  try {
+    var product_id = req.query.product_id;
+    var pageSize = req.query.pageSize? parseInt(req.query.pageSize) : 5;
+    var page = req.query.page? parseInt(req.query.page) : 0;
+    const questions = await db.getQuestions(product_id, page, pageSize)
 
-  return db.getQuestions(product_id, page, pageSize)
-    .then( (questions) => {
-      console.log("Successfully got ALL questions");
-      var finalFormattedQuestions = [];
-      var nonReportedQuestions = questions.filter((question) => !question.reported);
-      var formattedQuestions = nonReportedQuestions.map((question) => {
-        var formattedAnswers = {};
-        db.getAnswers(question.dataValues.id, page, pageSize)
-        .then((nonReportedAnswers) => {
-           nonReportedAnswers.forEach((answer) => {
-            //  console.log('ANSWER', answer.dataValues.id)
-             db.getPhotos(answer.dataValues.id)
-             .then((photos) => {
-               var formattedPhotos = []
-               photos.forEach((photo) => {
-                 var photoObject = {};
-                 photoObject.id = photo.dataValues.id;
-                 photoObject.url = photo.dataValues.url;
-                 formattedPhotos.push(photoObject);
-               });
+    console.log("Successfully got ALL questions");
+    let finalFormattedQuestions = [];
+    const nonReportedQuestions = questions.filter((question) => !question.reported);
+    for (let i = 0; i < nonReportedQuestions.length; i++) {
+      const question = nonReportedQuestions[i];
 
-               var finalAnswer = {
-                 id: answer.dataValues.id,
-                 body: answer.dataValues.body,
-                 date: new Date(Number(answer.dataValues.date)).toISOString(),
-                 answerer_name: answer.dataValues.answerer_name,
-                 helpfulness: answer.dataValues.helpfulness,
-                 photos: formattedPhotos
-               }
+      var formattedAnswers = {};
 
-               formattedAnswers[answer.dataValues.id] = finalAnswer;
-               return formattedAnswers;
-             })
-             .then((formattedAnswers) => {
-               var finalQuestion = {
-                question_id: question.dataValues.question_id,
-                question_body: question.dataValues.question_body,
-                question_date: new Date(Number(question.dataValues.question_date)).toISOString(),
-                asker_name: question.dataValues.asker_name,
-                question_helpfulness: question.dataValues.question_helpfulness,
-                reported: question.dataValues.reported,
-                answers: formattedAnswers
-               }
-               finalFormattedQuestions.push(finalQuestion);
-               return finalFormattedQuestions
-             })
-             .then((finalFormattedQuestions) => {
-               var properlyFormattedQuestionsAnswersPhotos = {
-                 product_id,
-                 results: finalFormattedQuestions
-               }
-               return properlyFormattedQuestionsAnswersPhotos
-             })
-             .then((properlyFormattedQuestionsAnswersPhotos) => {
-               res.status(200).send(properlyFormattedQuestionsAnswersPhotos)
-             })
-           })
-        })
-      })
+      const nonReportedAnswers = await db.getAnswers(question.dataValues.id, page, pageSize)
+      for (let j = 0; j < nonReportedAnswers.length; j++) {
+        const answer = nonReportedAnswers[j];
+        const photos = await db.getPhotos(answer.dataValues.id)
+        var formattedPhotos = []
+        photos.forEach((photo) => {
+          var photoObject = {};
+          photoObject.id = photo.dataValues.id;
+          photoObject.url = photo.dataValues.url;
+          formattedPhotos.push(photoObject);
+        });
 
-    })
-    .catch ((error) => {
-      console.log("Failed to get questions")
-      res.status(500).send(error)
-    })
+        var finalAnswer = {
+          id: answer.dataValues.id,
+          body: answer.dataValues.body,
+          date: new Date(Number(answer.dataValues.date)).toISOString(),
+          answerer_name: answer.dataValues.answerer_name,
+          helpfulness: answer.dataValues.helpfulness,
+          photos: formattedPhotos
+        }
+        formattedAnswers[answer.dataValues.id] = finalAnswer;
+
+        var finalQuestion = {
+          question_id: question.dataValues.id,
+          question_body: question.dataValues.question_body,
+          question_date: new Date(Number(question.dataValues.question_date)).toISOString(),
+          asker_name: question.dataValues.asker_name,
+          question_helpfulness: question.dataValues.question_helpfulness,
+          reported: question.dataValues.reported,
+          answers: formattedAnswers
+        }
+        console.log('FINAL QUESTION', finalQuestion);
+        finalFormattedQuestions.push(finalQuestion);
+      }
+    }
+    var properlyFormattedQuestionsAnswersPhotos = {
+      product_id,
+      results: finalFormattedQuestions
+  }
+  res.status(200).send(properlyFormattedQuestionsAnswersPhotos)
+  }
+  catch (error) {
+    console.log("Failed to get questions")
+    res.status(500).send(error)
+  }
 })
+
+
+
+
+
+
 
 // add question
 app.post('/qa/questions', bodyParser.urlencoded(), function(req, res) {
@@ -91,7 +92,6 @@ app.post('/qa/questions', bodyParser.urlencoded(), function(req, res) {
       res.status(500).send(error);
     })
 })
-
 // get answers
 app.get('/qa/questions/:question_id/answers', bodyParser.json(), function(req, res) {
   var question_id = req.params.question_id;
@@ -107,7 +107,6 @@ app.get('/qa/questions/:question_id/answers', bodyParser.json(), function(req, r
       res.status(500).send(error)
     })
 })
-
 // add answer
 app.post('/qa/questions/:question_id/answers', bodyParser.urlencoded(),  function(req, res) {
   return db.addAnswer(req)
@@ -120,9 +119,7 @@ app.post('/qa/questions/:question_id/answers', bodyParser.urlencoded(),  functio
     res.status(500).send(error);
   })
 })
-
 // // get photos????????????????????????????????????????????????????????????????????????????????????????????????????????????
-
 // //add photo to answer ???????????????????????????????????????????????????????????????????????????????????????????????????
 // app.post('ROUTE',bodyParser.urlencoded(), function(req, res) {
 //   return db.addPhoto(req)
@@ -135,7 +132,6 @@ app.post('/qa/questions/:question_id/answers', bodyParser.urlencoded(),  functio
 //     res.status(500).send(error);
 //   })
 // })
-
 // mark question helpful
 app.put('/qa/questions/:question_id/helpful', function(req, res) {
   return db.updateQuestionHelpfulness(req.params.question_id)
@@ -148,7 +144,6 @@ app.put('/qa/questions/:question_id/helpful', function(req, res) {
     res.status(500).send(error);
   })
 })
-
 // mark answer helpful
 app.put('/qa/answers/:answer_id/helpful', function(req, res) {
   return db.updateAnswerHelpfulness(req.params.answer_id)
@@ -161,7 +156,6 @@ app.put('/qa/answers/:answer_id/helpful', function(req, res) {
     res.status(500).send(error);
   })
 })
-
 // report question
 app.put('/qa/questions/:question_id/report', function(req, res) {
   return db.reportQuestion(req.params.question_id)
@@ -174,7 +168,6 @@ app.put('/qa/questions/:question_id/report', function(req, res) {
     res.status(500).send(error);
   })
 })
-
 // report answer
 app.put('/qa/answers/:answer_id/report', function(req, res) {
   return db.reportAnswer(req.params.answer_id)
@@ -187,7 +180,4 @@ app.put('/qa/answers/:answer_id/report', function(req, res) {
     res.status(500).send(error);
   })
 })
-
 module.exports = app;
-
-
