@@ -138,10 +138,28 @@ app.get('/qa/questions/:question_id/answers', bodyParser.json(), async function(
 
 // add answer
 app.post('/qa/questions/:question_id/answers', bodyParser.urlencoded(),  function(req, res) {
+
+  if(req.body.photos){
+    var photoUrls = req.body.photos.split(",")
+  }
+
   return db.addAnswer(req)
   .then((answerAdded) => {
     console.log("Successfully added answer", answerAdded)
-    res.status(200).send(answerAdded);
+    if (!photoUrls){
+      res.status(200).send(answerAdded);
+    } else {
+      console.log('🥳', answerAdded.dataValues.id)
+      console.log('🤖', photoUrls)
+      return db.addPhotos(answerAdded.dataValues.id, photoUrls)
+      .then((savedPhotos) => {
+        res.status(200).send(savedPhotos);
+      })
+      .catch ((error) => {
+        console.log(error)
+        res.status(500).send(error);
+      })
+    }
   })
   .catch((error) => {
     console.log("Failed to add answer")

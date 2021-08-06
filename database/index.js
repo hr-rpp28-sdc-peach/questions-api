@@ -40,7 +40,7 @@ const getQuestions = (product_id, page, pageSize) => {
       product_id: product_id
     },
     ...paginate({ page, pageSize }),
-  });
+  })
 }
 // add question
 
@@ -71,7 +71,6 @@ const getAnswers = (question_id, page, pageSize) => {
 // add answer
 
 const addAnswer = (answerInfo) => {
-  console.log('Question ID', answerInfo.params.question_id);
   return Answer.create({
     question_id: answerInfo.params.question_id,
     body: answerInfo.body.body,
@@ -92,8 +91,23 @@ const getPhotos = (answer_id) => {
   })
 }
 
-const addPhoto = (answer_id, url) => {
-  //WRITE Me
+const addPhotos = (answer_id, urls) => {
+  if(urls.length > 1) {
+    var bulkCreateArray = [];
+    for(var i = 0; i < urls.length; i++){
+      var currentUrl = url[i];
+      var urlObj = {answer_id: answer_id, url: currentUrl };
+      bulkCreateArray.push(urlObj);
+    };
+    return Photo.bulkCreate(
+      bulkCreateArray
+    );
+  } else {
+    return Photo.create({
+      answer_id: answer_id,
+      url: urls[0]
+    });
+  }
 }
 
 // mark question helpful
@@ -122,4 +136,4 @@ const reportAnswer = (answer_id) => {
 }
 
 
-module.exports = {getQuestions, getAnswers, addQuestion, addAnswer, updateQuestionHelpfulness, updateAnswerHelpfulness, reportQuestion, reportAnswer, getPhotos, addPhoto}
+module.exports = {getQuestions, getAnswers, addQuestion, addAnswer, updateQuestionHelpfulness, updateAnswerHelpfulness, reportQuestion, reportAnswer, getPhotos, addPhotos}
