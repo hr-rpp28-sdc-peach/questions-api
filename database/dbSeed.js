@@ -42,3 +42,4 @@ sequelize.authenticate()
   .catch(function(error) {
     console.error('DB Seeding ERROR:', error)
   })
+

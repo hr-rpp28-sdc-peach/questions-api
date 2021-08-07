@@ -81,3 +81,5 @@ sequelize.authenticate()
   module.exports = {Photo, Question, Answer}
 
 
+
+
