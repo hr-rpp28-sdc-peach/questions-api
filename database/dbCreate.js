@@ -1,11 +1,16 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
 require('dotenv').config();
 
-const user = process.env.USER
+const user = process.env.USERNAME
 const host = process.env.HOST
 const database = process.env.DATABASE
 const password = process.env.PASSWORD
 const port = process.env.PORT
+
+// console.log(
+//   "USER:", user,
+//   "password:", password
+// )
 
 const sequelize = new Sequelize(database, user, password, {
   host,
@@ -79,7 +84,4 @@ sequelize.authenticate()
   sequelize.sync();
 
   module.exports = {Photo, Question, Answer}
-
-
-
 

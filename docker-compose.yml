@@ -1,0 +1,25 @@
+# version: "3.9"
+# services:
+#   questionsapiapp:
+#     container_name: questionapiapp
+#     build: .
+#     restart: always
+#     ports:
+#       - "3000:3000"
+#     links:
+#       - postgres
+#     env_file: .env
+#     environment:
+#       - POSTGRES_DB=$DATABASE
+#       - POSTGRES_USER=$USER
+#       - POSTGRES_PASSWORD=$PASSWORD
+#       - POSTGRES_HOST=postgres
+#   postgres:
+#     container_name: postgres
+#     image: postgres:latest
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       - POSTGRES_HOST_AUTH_METHOD=trust
+# volumes:
+#   myvolumedata:

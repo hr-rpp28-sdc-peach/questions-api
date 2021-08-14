@@ -2,7 +2,7 @@ const { Sequelize, Model, DataTypes } = require('sequelize');
 const {Question, Answer, Photo} = require('./dbCreate.js')
 require('dotenv').config();
 
-const user = process.env.USER;
+const user = process.env.USERNAME;
 const host = process.env.HOST;
 const database = process.env.DATABASE;
 const password = process.env.PASSWORD;
