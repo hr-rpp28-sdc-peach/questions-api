@@ -6,9 +6,7 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
 
-
-
-
+app.use(express.static('public'));
 
 
 // get all questions
