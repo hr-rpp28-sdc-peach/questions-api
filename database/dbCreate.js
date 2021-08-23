@@ -12,6 +12,8 @@ const port = process.env.PORT
 //   "password:", password
 // )
 
+//console.log(host, port)
+
 const sequelize = new Sequelize(database, user, password, {
   host,
   port,

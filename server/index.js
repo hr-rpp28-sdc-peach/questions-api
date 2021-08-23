@@ -3,5 +3,5 @@ const app = require('./app.js');
 
 
 app.listen(port, () => {
-  console.log(`Questions Server listening at http://localhost:${port}`)
+  console.log(`Questions Server listening at port ${port}`)
 })

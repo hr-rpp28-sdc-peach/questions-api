@@ -2,11 +2,51 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const db = require('../database/index.js');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const redis = require('redis');
+const redisClient = redis.createClient({ host: '172.31.84.31', port: 6379 })
+
 app.use(bodyParser.json())
 
 
 app.use(express.static('public'));
+
+const cache = (req, res, next) => {
+
+  let product_id = Number(req.query.product_id);
+  let question_id = Number(req.params.question_id);
+
+  if (product_id) {
+    let key = `ProductID ${product_id}`
+
+    redisClient.get(key, (err, data) => {
+      if (err) throw err;
+
+      if (data !== null) {
+        console.log('found productID in cache')
+        res.send(JSON.parse(data))
+      } else {
+        next()
+      }
+    })
+  }
+
+  if (question_id) {
+    let key = `QuestionID ${question_id}`;
+
+    redisClient.get(key, (err, data) => {
+      if (err) throw err;
+
+      if (data !== null) {
+        console.log('found questionID in cache')
+        res.send(JSON.parse(data))
+      } else {
+        next()
+      }
+    })
+  }
+}
+
 
 
 // get all questions
@@ -64,6 +104,8 @@ app.get('/qa/questions', async function(req, res) {
       product_id,
       results: finalFormattedQuestions
     }
+  var key = `ProductID ${product_id}`
+  redisClient.setex(key, 3000, JSON.stringify(properlyFormattedQuestionsAnswersPhotos));
   res.status(200).send(properlyFormattedQuestionsAnswersPhotos);
   }
   catch (error) {
@@ -127,6 +169,9 @@ app.get('/qa/questions/:question_id/answers', bodyParser.json(), async function(
       count: pageSize,
       results: formattedAnswers
     }
+
+    var key = `QuestionID ${question_id}`;
+    redisClient.setex(key, 3000, JSON.stringify(properlyFormattedAnswersPhotos));
     res.status(200).send(properlyFormattedAnswersPhotos);
   }
   catch (error){
